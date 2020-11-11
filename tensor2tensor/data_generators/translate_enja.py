@@ -157,7 +157,7 @@ def get_filename(dataset):
 
 
 @registry.register_problem
-class TranslateJazhWmt32k(translate.TranslateProblem):
+class TranslateEnjaWmt32k(translate.TranslateProblem):
   """Problem spec for WMT En-Zh translation.
 
   Attempts to use full training dataset, which needs website
@@ -182,11 +182,11 @@ class TranslateJazhWmt32k(translate.TranslateProblem):
 
   @property
   def source_vocab_name(self):
-    return "%s.ja" % self.vocab_filename
+    return "%s.en" % self.vocab_filename
 
   @property
   def target_vocab_name(self):
-    return "%s.zh" % self.vocab_filename
+    return "%s.ja" % self.vocab_filename
 
   def get_training_dataset(self, tmp_dir):
     """UN Parallel Corpus and CWMT Corpus need to be downloaded manually.
@@ -253,7 +253,7 @@ class TranslateJazhWmt32k(translate.TranslateProblem):
 
 
 @registry.register_problem
-class TranslateEnzhWmt8k(TranslateEnzhWmt32k):
+class TranslateEnjaWmt8k(TranslateEnjaWmt32k):
   """Problem spec for WMT En-Zh translation.
 
   This is far from being the real WMT17 task - only toyset here
