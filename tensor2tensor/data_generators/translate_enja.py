@@ -33,122 +33,128 @@ import tensorflow.compat.v1 as tf
 # End-of-sentence marker.
 EOS = text_encoder.EOS_ID
 
-# This is far from being the real WMT18 task - only toyset here
-# you need to register to get UN data and CWT data. Also, by convention,
-# this is EN to ZH - use translate_enzh_wmt8k_rev for ZH to EN task
+# The KFTT is a task for the evaluation and development of
+# Japanese-English machine translation systems.
 #
-# News Commentary, around 252k lines
-# This dataset is only a small fraction of full WMT18 task
-_STAT_MT_URL = "http://data.statmt.org/wmt18/translation-task/"
-_NC_TRAIN_DATASETS = [[
-    _STAT_MT_URL + "training-parallel-nc-v13.tgz", [
-        "training-parallel-nc-v13/news-commentary-v13.zh-en.en",
-        "training-parallel-nc-v13/news-commentary-v13.zh-en.zh"
+# http://www.phontron.com/kftt/
+# Wikipedia articles about Kyoto manually translated by NICT.
+# ja files already tokenized
+# around 330k lines
+_KFTT_TRAIN_DATASETS = [[
+    "http://www.phontron.com/kftt/download/kftt-data-1.0.tar.gz", [
+        "kftt-data-1.0/data/tok/kyoto-train.cln.en",
+        "kftt-data-1.0/data/tok/kyoto-train.cln.ja"
     ]
 ]]
 
-# Test set from News Commentary. 2000 lines
-_NC_TEST_DATASETS = [[
-    _STAT_MT_URL + "dev.tgz",
-    ("dev/newsdev2017-enzh-src.en.sgm", "dev/newsdev2017-enzh-ref.zh.sgm")
+# Test set from KFTT. 1160 lines
+_KFTT_TEST_DATASETS = [[
+    "http://www.phontron.com/kftt/download/kftt-data-1.0.tar.gz", [
+        "kftt-data-1.0/data/tok/kyoto-test.cln.en",
+        "kftt-data-1.0/data/tok/kyoto-test.cln.ja"
+    ]
 ]]
 
-# UN parallel corpus. 15,886,041 lines
+# JParaCrawl ： 10,120,013 lines.
 # Visit source website to download manually:
-# https://conferences.unite.un.org/UNCorpus
-#
-# NOTE: You need to register to download dataset from official source
-# place into tmp directory e.g. /tmp/t2t_datagen/dataset.tgz
-_UN_TRAIN_DATASETS = [[
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/UNv1.0.en-zh.tar"
-    ".gz", ["en-zh/UNv1.0.en-zh.en", "en-zh/UNv1.0.en-zh.zh"]
+# http://www.kecl.ntt.co.jp/icl/lirg/jparacrawl/
+
+_JPC_TRAIN_DATASETS = [[
+    "http://www.kecl.ntt.co.jp/icl/lirg/jparacrawl/release/2.0/bitext/en-ja.tar"
+    ".gz", ["en-ja/en-ja.bicleaner05.txt.en", "en-ja/en-ja.bicleaner05.txt.ja"]
 ]]
 
-# CWMT corpus
-# Visit source website to download manually:
-# http://nlp.nju.edu.cn/cwmt-wmt/
-#
-# casia2015: 1,050,000 lines
-# casict2015: 2,036,833 lines
-# datum2015:  1,000,003 lines
-# datum2017: 1,999,968 lines
-# NEU2017:  2,000,000 lines
-#
-# NOTE: You need to register to download dataset from official source
-# place into tmp directory e.g. /tmp/t2t_datagen/dataset.tgz
+# # CWMT corpus
+# # Visit source website to download manually:
+# # http://nlp.nju.edu.cn/cwmt-wmt/
+# #
+# # casia2015: 1,050,000 lines
+# # casict2015: 2,036,833 lines
+# # datum2015:  1,000,003 lines
+# # datum2017: 1,999,968 lines
+# # NEU2017:  2,000,000 lines
+# # total: appromirate 8,085,000
+# #
+# # NOTE: You need to register to download dataset from official source
+# # place into tmp directory e.g. /tmp/t2t_datagen/dataset.tgz
 
-_CWMT_TRAIN_DATASETS = [[
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/casia2015/casia2015_en.txt", "cwmt/casia2015/casia2015_ch.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/casict2015/casict2015_en.txt", "cwmt/casict2015/casict2015_ch.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/neu2017/NEU_en.txt", "cwmt/neu2017/NEU_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2015/datum_en.txt", "cwmt/datum2015/datum_ch.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book1_en.txt", "cwmt/datum2017/Book1_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book2_en.txt", "cwmt/datum2017/Book2_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book3_en.txt", "cwmt/datum2017/Book3_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book4_en.txt", "cwmt/datum2017/Book4_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book5_en.txt", "cwmt/datum2017/Book5_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book6_en.txt", "cwmt/datum2017/Book6_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book7_en.txt", "cwmt/datum2017/Book7_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book8_en.txt", "cwmt/datum2017/Book8_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book9_en.txt", "cwmt/datum2017/Book9_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book10_en.txt", "cwmt/datum2017/Book10_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book11_en.txt", "cwmt/datum2017/Book11_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book12_en.txt", "cwmt/datum2017/Book12_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book13_en.txt", "cwmt/datum2017/Book13_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book14_en.txt", "cwmt/datum2017/Book14_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book15_en.txt", "cwmt/datum2017/Book15_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book16_en.txt", "cwmt/datum2017/Book16_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book17_en.txt", "cwmt/datum2017/Book17_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book18_en.txt", "cwmt/datum2017/Book18_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book19_en.txt", "cwmt/datum2017/Book19_cn.txt"]
-], [
-    "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
-    ["cwmt/datum2017/Book20_en.txt", "cwmt/datum2017/Book20_cn.txt"]
+# _CWMT_TRAIN_DATASETS = [[
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/casia2015/casia2015_en.txt", "cwmt/casia2015/casia2015_ch.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/casict2015/casict2015_en.txt", "cwmt/casict2015/casict2015_ch.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/neu2017/NEU_en.txt", "cwmt/neu2017/NEU_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2015/datum_en.txt", "cwmt/datum2015/datum_ch.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book1_en.txt", "cwmt/datum2017/Book1_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book2_en.txt", "cwmt/datum2017/Book2_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book3_en.txt", "cwmt/datum2017/Book3_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book4_en.txt", "cwmt/datum2017/Book4_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book5_en.txt", "cwmt/datum2017/Book5_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book6_en.txt", "cwmt/datum2017/Book6_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book7_en.txt", "cwmt/datum2017/Book7_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book8_en.txt", "cwmt/datum2017/Book8_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book9_en.txt", "cwmt/datum2017/Book9_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book10_en.txt", "cwmt/datum2017/Book10_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book11_en.txt", "cwmt/datum2017/Book11_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book12_en.txt", "cwmt/datum2017/Book12_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book13_en.txt", "cwmt/datum2017/Book13_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book14_en.txt", "cwmt/datum2017/Book14_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book15_en.txt", "cwmt/datum2017/Book15_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book16_en.txt", "cwmt/datum2017/Book16_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book17_en.txt", "cwmt/datum2017/Book17_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book18_en.txt", "cwmt/datum2017/Book18_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book19_en.txt", "cwmt/datum2017/Book19_cn.txt"]
+# ], [
+#     "https://s3-us-west-2.amazonaws.com/twairball.wmt17.zh-en/cwmt.tgz",
+#     ["cwmt/datum2017/Book20_en.txt", "cwmt/datum2017/Book20_cn.txt"]
+# ]]
+
+_JESC_TRAIN_DATASETS = [[
+    "https://nlp.stanford.edu/projects/jesc/data/raw.tar.gz",
+    ["raw/raw.en", "raw/raw.ja"]
 ]]
 
 
@@ -199,22 +205,23 @@ class TranslateEnjaWmt32k(translate.TranslateProblem):
     Returns:
       paths
     """
-    # TODO
-    full_dataset = _NC_TRAIN_DATASETS
-    for dataset in [_CWMT_TRAIN_DATASETS, _UN_TRAIN_DATASETS]:
+    full_dataset = _KFTT_TEST_DATASETS
+    # for dataset in [_CWMT_TRAIN_DATASETS, _UN_TRAIN_DATASETS]:
+
+    for dataset in [_JESC_TRAIN_DATASETS, _JPC_TRAIN_DATASETS]:
       filename = get_filename(dataset)
       tmp_filepath = os.path.join(tmp_dir, filename)
       if tf.gfile.Exists(tmp_filepath):
         full_dataset += dataset
       else:
-        tf.logging.info("[TranslateEzhWmt] dataset incomplete, you need to "
+        tf.logging.info("[TranslateEnjaWmt] dataset incomplete, you need to "
                         "manually download %s" % filename)
     return full_dataset
 
   def generate_encoded_samples(self, data_dir, tmp_dir, dataset_split):
     train = dataset_split == problem.DatasetSplit.TRAIN
     train_dataset = self.get_training_dataset(tmp_dir)
-    datasets = train_dataset if train else _NC_TEST_DATASETS
+    datasets = train_dataset if train else _KFTT_TEST_DATASETS
     source_datasets = [[item[0], [item[1][0]]] for item in train_dataset]
     target_datasets = [[item[0], [item[1][1]]] for item in train_dataset]
     source_vocab = generator_utils.get_or_generate_vocab(
@@ -234,7 +241,7 @@ class TranslateEnjaWmt32k(translate.TranslateProblem):
         file_byte_budget=1e8,
         max_subtoken_length=self.max_subtoken_length)
     tag = "train" if train else "dev"
-    filename_base = "wmt_enzh_%sk_tok_%s" % (self.approx_vocab_size, tag)
+    filename_base = "wmt_enja_%sk_tok_%s" % (self.approx_vocab_size, tag)
     data_path = translate.compile_data(tmp_dir, datasets, filename_base)
     return text_problems.text2text_generate_encoded(
         text_problems.text2text_txt_iterator(data_path + ".lang1",
@@ -278,4 +285,5 @@ class TranslateEnjaWmt8k(TranslateEnjaWmt32k):
 
   def get_training_dataset(self, tmp_dir):
     """Uses only News Commentary Dataset for training."""
-    return _NC_TRAIN_DATASETS
+    # return _NC_TRAIN_DATASETS
+    return _KFTT_TRAIN_DATASETS
