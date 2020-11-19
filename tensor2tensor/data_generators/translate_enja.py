@@ -50,8 +50,8 @@ _KFTT_TRAIN_DATASETS = [[
 # Test set from KFTT. 1160 lines
 _KFTT_TEST_DATASETS = [[
     "http://www.phontron.com/kftt/download/kftt-data-1.0.tar.gz", [
-        "kftt-data-1.0/data/tok/kyoto-test.cln.en",
-        "kftt-data-1.0/data/tok/kyoto-test.cln.ja"
+        "kftt-data-1.0/data/tok/kyoto-test.en",
+        "kftt-data-1.0/data/tok/kyoto-test.ja"
     ]
 ]]
 
